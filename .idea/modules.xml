@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Box2DApp.iml" filepath="$PROJECT_DIR$/Box2DApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JBox2D-Demo.iml" filepath="$PROJECT_DIR$/JBox2D-Demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
