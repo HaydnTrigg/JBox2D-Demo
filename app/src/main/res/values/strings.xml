@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">JBox2D Demo</string>
+    <color  name="button_background">#66FF0000</color>
+</resources>
