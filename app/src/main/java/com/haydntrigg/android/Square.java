@@ -24,12 +24,12 @@ public class Square {
     private ShortBuffer drawListBuffer;
 
     // number of coordinates per vertex in this array
-    static final int COORDS_PER_VERTEX = 3;
+    static final int COORDS_PER_VERTEX = 2;
     static float squareCoords[] = {
-            -0.5f, -0.5f, 0.0f,     // bottom left
-            0.5f, -0.5f, 0.0f,      // bottom right
-            0.5f,  0.5f, 0.0f,      // top right
-            -0.5f,  0.5f, 0.0f};    // top left
+            -0.5f, -0.5f,     // bottom left
+            0.5f, -0.5f,      // bottom right
+            0.5f,  0.5f,      // top right
+            -0.5f,  0.5f};    // top left
 
 
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
@@ -37,11 +37,11 @@ public class Square {
 
 
     private final String vertexShaderCode =
-            "attribute vec3 vPosition;" +
+            "attribute vec2 vPosition;" +
                     "varying vec2 TexCoord;" +
                     "uniform mat4 vMatrix;" +
                     "void main() {" +
-                    "  gl_Position = vMatrix * vec4(vPosition,1);" +
+                    "  gl_Position = vMatrix * vec4(vPosition,0,1);" +
                     "  TexCoord = vPosition.st + 0.5;" +
                     "  TexCoord.t = 1.0 - TexCoord.t;" +
                     "}";
@@ -59,7 +59,7 @@ public class Square {
     int mProgram;
     int mPositionHandle,mColorHandle,mMatrixHandle,mTextureHandle;
     static final int vertexStride = COORDS_PER_VERTEX * 4;
-    static final int vertexCount = 6;
+    static final int vertexCount = 4;
 
     public Square() {
         // initialize vertex byte buffer for shape coordinates
