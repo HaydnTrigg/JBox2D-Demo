@@ -1,4 +1,4 @@
-package com.haydntrigg.game.supersovietsheep;
+package com.haydntrigg.android;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
