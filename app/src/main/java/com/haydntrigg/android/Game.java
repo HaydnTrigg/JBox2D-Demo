@@ -2,6 +2,8 @@ package com.haydntrigg.android;
 import android.opengl.GLES20;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.haydntrigg.game.supersovietsheep.R;
@@ -40,6 +42,8 @@ public class Game {
     World b2World;
     Vector4f DrawWhite = new Vector4f(1.0f,1.0f,1.0f,1.0f);
 
+    Button ResetButton, SpawnButton, TimeButton;
+    Boolean IsSlow = false;
     enum ObjectType
     {
         Box,
@@ -60,7 +64,7 @@ public class Game {
     {
         for (Body b = b2World.getBodyList(); b != null; b = b.getNext()) b2World.destroyBody(b);
         CreateFloor(new Vec2(6.5f, 1f));
-        CreateBox(new Vec2(6.5f, 2.7f));
+        CreateBox(new Vec2(6.5f, 2.55f));
         CreateBox(new Vec2(6.0f,1.55f));
         CreateBox(new Vec2(7.0f,1.55f));
         CreateBall(new Vec2(10.0f,5.0f),new Vec2(-7.5f,-5.5f));
@@ -197,6 +201,73 @@ public class Game {
         groundSprite = new Sprite(groundTexture);
         GLES20.glClearColor(235f / 255.0f, 235f / 255.0f, 255f / 255.0f, 255f / 255.0f);
 
+        ResetButton = (Button)Parent.findViewById(R.id.reset_button);
+        SpawnButton = (Button)Parent.findViewById(R.id.spawntype_button);
+        TimeButton = (Button)Parent.findViewById(R.id.time_button);
+
+        ResetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try
+                {
+                    Parent.semaphore.acquire(1);
+                    Reset();
+                }
+                catch (Exception e)
+                {
+
+                }
+                finally {
+                    Parent.semaphore.release(1);
+                }
+            }
+        });
+
+        SpawnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try
+                {
+                    Parent.semaphore.acquire(1);
+                    switch(SpawnType)
+                    {
+                        case Box:
+                            SpawnType=ObjectType.Ball;
+                            break;
+                        default:
+                            SpawnType=ObjectType.Box;
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+                finally {
+                    Parent.semaphore.release(1);
+                }
+            }
+        });
+
+        TimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try
+                {
+                    Parent.semaphore.acquire(1);
+                    IsSlow= !IsSlow;
+
+                }
+                catch (Exception e)
+                {
+
+                }
+                finally {
+                    Parent.semaphore.release(1);
+                }
+            }
+        });
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -208,7 +279,9 @@ public class Game {
 
     public void Update(float delta)
     {
-        b2World.step(delta, 10, 10);
+        if(IsSlow) b2World.step(delta * 0.2f, 20, 20);
+        else b2World.step(delta, 20, 20);
+
         for(Body b = b2World.getBodyList();b!=null;b=b.getNext())
         {
             Vec2 position = b.getPosition();
@@ -230,21 +303,19 @@ public class Game {
                 switch((ObjectType)body.getUserData())
                 {
                     case Box:
-                        boxSprite.Draw(body.getWorldCenter(), body.getAngle(), 1.05f / 48.0f, View);
+                        boxSprite.Draw(body.getWorldCenter(), body.getAngle(), 1.05f / 94.0f, View);
                         break;
                     case Floor:
                         groundSprite.Draw(body.getWorldCenter(), body.getAngle(), 1.05f / 100.0f, View);
                         break;
                     case Ball:
-
-
                         Vec2 position = body.getWorldCenter();
-                        ballSprite.Draw(position, body.getAngle(), 1.05f / 48.0f, View);
+                        ballSprite.Draw(position, body.getAngle(), 1.05f / 100.0f, View);
 
                         Vec2 velocity = new Vec2(body.getLinearVelocity());
                         float length = velocity.length();
                         velocity.normalize();
-                        if(length > 2.0)
+                        if(length > 1.0)
                         {
 
                             Vec2 direction = new Vec2(-velocity.y,velocity.x);
@@ -272,7 +343,7 @@ public class Game {
 
 
                             float angle = (float)Math.atan2(direction.y,-direction.x);
-                            float transparency = Math.min((length - 2.0f) / 5.0f,1.0f);
+                            float transparency = Math.min((length - 1.0f) / 5.0f,1.0f);
                             transparency *= transparency;
                             Square.Color = new Vector4f(1.0f,1.0f,1.0f,transparency);
                             trailSprite.Draw(positionA, angle, new Vec2(base_size,length_size), View);
@@ -291,17 +362,31 @@ public class Game {
     public void UI()
     {
         textView.setText("JBox2D Box Example. Written by Haydn Trigg");
+        switch(SpawnType)
+        {
+            case Box:
+                SpawnButton.setText("Box");
+                break;
+            case Ball:
+                SpawnButton.setText("Ball");
+                break;
+            default:
+                SpawnButton.setText("Unknown?");
+                break;
+        }
+        if(IsSlow) TimeButton.setText("Slow");
+        else TimeButton.setText("Fast");
     }
 
     public void TouchEvent(MotionEvent e)
     {
         int num_bodies = b2World.getBodyCount();
-        if(num_bodies > 11) {
+        if(num_bodies > 50) {
             List<Body> bodies = new ArrayList<Body>();
             for (Body b = b2World.getBodyList(); b != null; b = b.getNext()) bodies.add(b);
             for (int i = bodies.size() - 1; i >= 0; i--) {
                 Body b = bodies.get(i);
-                if ((ObjectType) b.getUserData() == ObjectType.Box) {
+                if ((ObjectType) b.getUserData() != ObjectType.Floor) {
                     b2World.destroyBody(b);
                     break;
                 }

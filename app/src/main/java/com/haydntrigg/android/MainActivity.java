@@ -7,7 +7,9 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.haydntrigg.game.supersovietsheep.R;
 
@@ -23,6 +25,8 @@ public class MainActivity extends Activity implements Renderer {
     private GLSurfaceView glSurfaceView = null;
     private SurfaceHolder surfaceHolder = null;
     private MainActivity activity = this;
+    private RelativeLayout LayoutBody;
+
     private final Runnable uiRunnable = new Runnable() {
         @Override
         public void run() {
@@ -42,7 +46,7 @@ public class MainActivity extends Activity implements Renderer {
         }
     };
     Game game;
-    long lastTicks = Calendar.getInstance().getTime().getTime();
+    long lastTicks = -1;
     boolean init = false;
 
     @Override
@@ -52,11 +56,19 @@ public class MainActivity extends Activity implements Renderer {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        LayoutBody = (RelativeLayout) findViewById(R.id.layout_body);
+        LayoutBody.setVisibility(View.INVISIBLE);
+
+
+
         // Get the Surface View & Holder
         glSurfaceView = (GLSurfaceView) findViewById(R.id.game_canvas);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(this);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+
+
+
         game = new Game(this);
 
     }
@@ -79,7 +91,8 @@ public class MainActivity extends Activity implements Renderer {
             semaphore.acquire(1);
             GLES20.glClearColor(100.0f / 255.0f, 149f / 255.0f, 237f / 255.0f, 255f / 255.0f);
             game.Init();
-            lastTicks = Calendar.getInstance().getTime().getTime();
+            runOnUiThread(uiRunnable);
+            LayoutBody.setVisibility(View.VISIBLE);
         }
         catch (Exception e)
         {
@@ -112,6 +125,7 @@ public class MainActivity extends Activity implements Renderer {
         try
         {
             semaphore.acquire(1);
+            if(lastTicks == -1) lastTicks = Calendar.getInstance().getTime().getTime();
             final float min_timestep = 1.0f / 100.0f;
             // Calculate Delta Ticks
             long nowticks = Calendar.getInstance().getTime().getTime();

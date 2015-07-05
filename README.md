@@ -5,7 +5,7 @@ Simple demonstration using the Box2D Java Physics library, Java OpenGL Mathemati
 OpenGL ES Graphics 2.0 and Android Studio. Just press you're finger on the screen then watch
 a simple shape be created and fall and interact with surrounding objects.
 
-![Screenshot](http://raw.github.com/haydntrigg/JBox2D-Demo/master/doc/images/device-2015-07-02-213407.png)
+![Screenshot](http://raw.github.com/haydntrigg/JBox2D-Demo/master/doc/images/device-2015-07-05-162955.png)
 
 About the Project
 ---------
