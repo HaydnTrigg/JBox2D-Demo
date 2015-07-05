@@ -8,6 +8,7 @@ import java.nio.ShortBuffer;
 import android.opengl.GLES20;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 /**
  * A two-dimensional triangle for use as a drawn object in OpenGL ES 2.0.
@@ -33,7 +34,7 @@ public class Square {
 
 
     private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
-    float color[] = { 0.63671875f, 0.76953125f, 0.22265625f, 1.0f };
+    public static Vector4f Color = new Vector4f();
 
 
     private final String vertexShaderCode =
@@ -52,7 +53,7 @@ public class Square {
                     "varying vec2 TexCoord;" +
                     "uniform vec4 vColor;" +
                     "void main() {" +
-                    "  gl_FragColor = texture2D(vTexture,TexCoord.st).rgba;" +
+                    "  gl_FragColor = texture2D(vTexture,TexCoord.st).rgba * vColor;" +
                     "  gl_FragColor *= gl_FragColor.a;" +
                     "}";
 
@@ -121,6 +122,7 @@ public class Square {
                 GLES20.GL_FLOAT, false,
                 vertexStride, vertexBuffer);
 
+        float color[] = { Color.x,Color.y,Color.z,Color.w };
         // Set color for drawing the triangle
         GLES20.glUniform4fv(mColorHandle, 1, color, 0);
 

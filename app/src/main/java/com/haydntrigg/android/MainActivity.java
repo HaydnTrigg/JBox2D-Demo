@@ -42,6 +42,8 @@ public class MainActivity extends Activity implements Renderer {
         }
     };
     Game game;
+    long lastTicks = Calendar.getInstance().getTime().getTime();
+    boolean init = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class MainActivity extends Activity implements Renderer {
             semaphore.acquire(1);
             GLES20.glClearColor(100.0f / 255.0f, 149f / 255.0f, 237f / 255.0f, 255f / 255.0f);
             game.Init();
+            lastTicks = Calendar.getInstance().getTime().getTime();
         }
         catch (Exception e)
         {
@@ -104,9 +107,7 @@ public class MainActivity extends Activity implements Renderer {
             semaphore.release(1);
         }
     }
-
-    long lastTicks = Calendar.getInstance().getTime().getTime();
-    boolean init = false;
+    float Accumulator = 0.0f;
     public void onDrawFrame(GL10 gl) {
         try
         {
@@ -114,14 +115,14 @@ public class MainActivity extends Activity implements Renderer {
             final float min_timestep = 1.0f / 100.0f;
             // Calculate Delta Ticks
             long nowticks = Calendar.getInstance().getTime().getTime();
-            float total_delta = (float) (nowticks - lastTicks) / 1000.0f;
+            Accumulator += (float) (nowticks - lastTicks) / 1000.0f;
             lastTicks = nowticks;
             // Update for the total amount of time and any remainder. This ensures smoothest framerate.
-            while (total_delta > min_timestep) {
+            while (Accumulator > min_timestep) {
                 game.Update(min_timestep);
-                total_delta -= min_timestep;
+                Accumulator -= min_timestep;
             }
-            game.Update(total_delta);
+            //game.Update(total_delta);
             game.Draw();
             runOnUiThread(uiRunnable);
         }

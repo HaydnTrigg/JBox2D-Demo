@@ -4,7 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLUtils;
+
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 
 /**
  * Created by HAYDN on 1/7/2015.
@@ -71,6 +75,11 @@ public class Texture {
 
                 // Load the bitmap into the bound texture.
                 GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+                //GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, GLES30.GL_COMPRESSED_, bitmap, 0);
+                //Buffer buffer = ByteBuffer.allocate(bitmap.getWidth() * bitmap.getHeight());
+                //bitmap.copyPixelsFromBuffer(buffer);
+                //GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D,0, GLES20.GL_RGB, bitmap.getWidth(),bitmap.getHeight(),0,GLES20.GL_RGBA,GLES20.GL_UNSIGNED_BYTE, buffer);
+                //GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGB, bitmap.getWidth(),bitmap.getHeight(),0,GLES30.GL_RGBA,GLES30.GL_UNSIGNED_BYTE, buffer);
 
                 // Recycle the bitmap, since its data has been loaded into OpenGL.
                 bitmap.recycle();
