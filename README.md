@@ -20,11 +20,6 @@ About the Project
 						combined with the Android UI system. Version 2 was used to maintain maximum device 
 						support whilst maintaining a simplistic graphics interface and also provide a useful
 						and portable example.
-						
-Remaining Feature List
----------
-* Add some classic Box2D red circles.
-* Add a button to change what is going to be spawned.
 
 Quick Links
 ---------
