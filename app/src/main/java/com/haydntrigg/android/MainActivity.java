@@ -63,6 +63,10 @@ public class MainActivity extends Activity implements Renderer {
 
         // Get the Surface View & Holder
         glSurfaceView = (GLSurfaceView) findViewById(R.id.game_canvas);
+
+        //Chose EGL Config Here To Set Element Size For RGB data Alpha,
+        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(this);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
